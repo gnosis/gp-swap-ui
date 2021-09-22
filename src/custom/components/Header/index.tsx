@@ -83,9 +83,42 @@ export const HeaderModWrapper = styled(HeaderMod)`
   }
 `
 
-const NetworkCard = styled(NetworkCardUni)`
-  background-color: ${({ theme }) => theme.networkCard.background};
-  color: ${({ theme }) => theme.networkCard.text};
+function getNetworkColor(defaultColor: string, chainId?: number) {
+  switch (chainId) {
+    case 1:
+      return '#083533'
+    case 4:
+      return '#654f1a'
+    case 100:
+      return '#0d3a38'
+
+    default:
+      return defaultColor
+  }
+}
+
+function getNetworkBgColor(defaultBackgroundColor: string, chainId?: number) {
+  switch (chainId) {
+    case 1:
+      return '#29b6af'
+    case 4:
+      return '#f6c343'
+    case 100:
+      return '#4aa9a6'
+
+    default:
+      return defaultBackgroundColor
+  }
+}
+
+export const NetworkCard = styled(NetworkCardUni)<{
+  chainId: number
+}>`
+  background-color: ${({ theme, chainId }) => getNetworkBgColor(theme.networkCard.background, chainId)};
+  color: ${({ theme, chainId }) => getNetworkColor(theme.networkCard.text, chainId)};
+  text-align: center;
+  max-width: 10em;
+  margin: 0.5em auto;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     margin: 0 0 0 8px;
@@ -178,7 +211,9 @@ export default function Header() {
         <HeaderElement>
           <HideSmall>
             {chainId && NETWORK_LABELS[chainId] && (
-              <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
+              <NetworkCard title={NETWORK_LABELS[chainId]} chainId={chainId}>
+                {NETWORK_LABELS[chainId]}
+              </NetworkCard>
             )}
           </HideSmall>
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
